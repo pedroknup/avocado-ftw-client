@@ -1,5 +1,8 @@
 import { WeekPlanService } from '@/services/weekPlan.service'
-import { calculateDayMacros } from '../../../utils/calculateDayMacros'
+import {
+  calculateDayMacros,
+  calculateWeekMacros
+} from '../../../utils/calculateDayMacros'
 export default {
   loadCurrentWeekPlan ({ commit, dispatch }) {
     try {
@@ -17,7 +20,8 @@ export default {
   getUpdatedWeekPlan ({ commit, dispatch }, userId) {
     return WeekPlanService.fetchWeekPlan(userId)
       .then((weekPlan) => {
-        commit('SET_CURRENT_WEEK_PLAN', weekPlan.data)
+        const weekPlanWithMacros = calculateWeekMacros(weekPlan.data)
+        commit('SET_CURRENT_WEEK_PLAN', weekPlanWithMacros)
       })
       .catch((error) =>
         dispatch(
@@ -126,11 +130,12 @@ export default {
     meals = meals.filter((m) => {
       return m.id !== mealId
     })
-    const newMacros = calculateDayMacros(_weekPlan[day])
+    const newMacros = calculateDayMacros({ meals })
     _weekPlan[day] = {
       meals,
       ...newMacros
     }
+    console.log('new macros', newMacros)
     commit('SET_CURRENT_WEEK_PLAN', Object.create(_weekPlan))
     dispatch('calculateProgress', { root: false })
   },
@@ -231,32 +236,48 @@ const calculateProgressByDay = (day, plan, doneMeals, goal) => {
     (acc, meal) => acc + meal.calories * meal.quantity,
     0
   )
-  const caloriesGoal = goal.calories
+
+  const caloriesPlanDay = dayMeals.reduce(
+    (acc, meal) => acc + meal.calories * meal.quantity,
+    0
+  )
 
   const carbsProgress = finishedMeals.reduce(
     (acc, meal) => acc + meal.carbs * meal.quantity,
     0
   )
-  const carbsGoal = goal.carbs
+
+  const carbsPlanDay = dayMeals.reduce(
+    (acc, meal) => acc + meal.carbs * meal.quantity,
+    0
+  )
 
   const proteinProgress = finishedMeals.reduce(
     (acc, meal) => acc + meal.proteins * meal.quantity,
     0
   )
-  const proteinGoal = goal.proteins
+
+  const proteinPlanDay = dayMeals.reduce(
+    (acc, meal) => acc + meal.proteins * meal.quantity,
+    0
+  )
 
   const fatProgress = finishedMeals.reduce(
     (acc, meal) => acc + meal.fat * meal.quantity,
     0
   )
-  const fatGoal = goal.fat
 
-  const percentageCalories = (caloriesProgress / caloriesGoal) * 100
-  const percentageCarbs = (carbsProgress / carbsGoal) * 100
-  const percentageProtein = (proteinProgress / proteinGoal) * 100
-  const percentageFat = (fatProgress / fatGoal) * 100
+  const fatPlanDay = dayMeals.reduce(
+    (acc, meal) => acc + meal.fat * meal.quantity,
+    0
+  )
 
-  if (caloriesGoal > 0) {
+  const percentageCalories = (caloriesProgress / caloriesPlanDay) * 100
+  const percentageCarbs = (carbsProgress / carbsPlanDay) * 100
+  const percentageProtein = (proteinProgress / proteinPlanDay) * 100
+  const percentageFat = (fatProgress / fatPlanDay) * 100
+
+  if (caloriesPlanDay > 0) {
     const averagePercentage =
       (percentageCalories +
         percentageCarbs +

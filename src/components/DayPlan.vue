@@ -95,6 +95,9 @@ export default {
       console.log('click')
     },
     saveMealHandler ({ meal, shouldSave }) {
+      // generate a random hash id for meal
+      const id = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+      meal.id = id
       this.$store.commit('weekPlan/ADD_CUSTOM_MEAL', {
         meal,
         day: this.name.toLowerCase(),

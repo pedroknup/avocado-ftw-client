@@ -15,7 +15,7 @@
             </span>
             <span v-if="meal.quantity !== 1" class="quantity">
               {{ meal.quantity }} </span
-            >{{ meal.name }}</span
+            >{{ meal.name }}</span>
           >
         </div>
         <div class="macros">

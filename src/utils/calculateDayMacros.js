@@ -31,4 +31,25 @@ const calculateDayMacros = ({ meals }) => {
   }
 }
 
-export { calculateDayMacros }
+const calculateWeekMacros = (weekPlan) => {
+  if (!weekPlan) { throw new Error('Week plan is required to calculate week macros') }
+
+  const macrosMonday = calculateDayMacros(weekPlan.monday)
+  Object.assign(macrosMonday, weekPlan.monday)
+  const macrosTuesday = calculateDayMacros(weekPlan.tuesday)
+  Object.assign(macrosTuesday, weekPlan.tuesday)
+  const macrosWednesday = calculateDayMacros(weekPlan.wednesday)
+  Object.assign(macrosWednesday, weekPlan.wednesday)
+  const macrosThursday = calculateDayMacros(weekPlan.thursday)
+  Object.assign(macrosThursday, weekPlan.thursday)
+  const macrosFriday = calculateDayMacros(weekPlan.friday)
+  Object.assign(macrosFriday, weekPlan.friday)
+  const macrosSaturday = calculateDayMacros(weekPlan.saturday)
+  Object.assign(macrosSaturday, weekPlan.saturday)
+  const macrosSunday = calculateDayMacros(weekPlan.sunday)
+  Object.assign(macrosSunday, weekPlan.sunday)
+
+  return weekPlan
+}
+
+export { calculateDayMacros, calculateWeekMacros }
