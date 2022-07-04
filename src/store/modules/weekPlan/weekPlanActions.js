@@ -23,13 +23,13 @@ export default {
         const weekPlanWithMacros = calculateWeekMacros(weekPlan.data)
         commit('SET_CURRENT_WEEK_PLAN', weekPlanWithMacros)
       })
-      .catch((error) =>
-        dispatch(
-          'toast/fire',
-          { type: 'error', message: error.message },
-          { root: true }
-        )
-      )
+      // .catch((error) =>
+      // dispatch(
+      //   'toast/fire',
+      //   { type: 'error', message: error.message },
+      //   { root: true }
+      // )
+      // )
   },
   getUpdatedMeta ({ commit, dispatch }, userId) {
     const metaLocal = JSON.parse(localStorage.getItem('meta'))
